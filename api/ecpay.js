@@ -1,11 +1,23 @@
 const crypto = require('crypto');
 
 module.exports = async (req, res) => {
+  // 這四行就是幫你網站開門的 CORS 關鍵指令
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).send('Method Not Allowed');
   }
 
-  const { cartId, amount, itemName } = req.body;
+  const amount = Math.round(req.body.amount || 0);
+  const itemName = req.body.itemName || 'WECHEN_Product';
+  const cartId = req.body.cartId || '';
 
   const MerchantID = '3002607';
   const HashKey = 'pwFHCqoQZGmho4w6';
@@ -23,7 +35,7 @@ module.exports = async (req, res) => {
     PaymentType: 'aio',
     TotalAmount: amount,
     TradeDesc: 'WECHEN_Order',
-    ItemName: itemName || 'WECHEN_Product',
+    ItemName: itemName,
     ReturnURL,
     ChoosePayment: 'ALL',
     EncryptType: 1,
