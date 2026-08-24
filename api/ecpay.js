@@ -1,7 +1,6 @@
 const crypto = require('crypto');
 
 module.exports = async (req, res) => {
-  // 這四行就是幫你網站開門的 CORS 關鍵指令
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -16,17 +15,21 @@ module.exports = async (req, res) => {
   }
 
   const amount = Math.round(req.body.amount || 0);
-  const itemName = req.body.itemName || 'WECHEN_Product';
-  const cartId = req.body.cartId || '';
+  // 確保品名長度符合綠界規範
+  const itemName = (req.body.itemName || 'WECHEN_Product').substring(0, 50);
 
-  const MerchantID = '3002607';
-  const HashKey = 'pwFHCqoQZGmho4w6';
-  const HashIV = 'EkRm7iFT261dpe0j';
+  // 改用綠界官方最穩定的萬用測試帳號
+  const MerchantID = '2000132';
+  const HashKey = '5294y06JbISpM5x9';
+  const HashIV = 'v77hoKGq4kWxNNIS';
   const ReturnURL = 'https://wechen.tw/api/ecpay/return';
   const ClientBackURL = 'https://wechen.tw/store';
 
   const tradeNo = `WECHEN${new Date().getTime()}`;
-  const date = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false }).replace(/-/g, '/');
+
+  // 完美強制格式化時間為 YYYY/MM/DD HH:mm:ss (解決 Vercel 時間偏差問題)
+  const d = new Date(new Date().getTime() + 8 * 3600 * 1000);
+  const date = `${d.getUTCFullYear()}/${String(d.getUTCMonth() + 1).padStart(2, '0')}/${String(d.getUTCDate()).padStart(2, '0')} ${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}:${String(d.getUTCSeconds()).padStart(2, '0')}`;
 
   const params = {
     MerchantID,
@@ -62,7 +65,7 @@ module.exports = async (req, res) => {
   const CheckMacValue = crypto.createHash('sha256').update(checkMacStr).digest('hex').toUpperCase();
   params.CheckMacValue = CheckMacValue;
 
-let formHtml = `<form id="ecpay-form" target="_top" method="POST" action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5">`;
+  let formHtml = `<form id="ecpay-form" target="_top" method="POST" action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5">`;
   for (const key in params) {
     formHtml += `<input type="hidden" name="${key}" value="${params[key]}" />`;
   }
