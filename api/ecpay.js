@@ -63,15 +63,12 @@ function generateCheckMacValue(params, HashKey, HashIV) {
   const sortedKeys = Object.keys(params).sort();
   let checkString = `HashKey=${HashKey}&` + sortedKeys.map(key => `${key}=${params[key]}`).join('&') + `&HashIV=${HashIV}`;
   
-  // 1. URL Encode 並轉小寫
   let encoded = encodeURIComponent(checkString).toLowerCase();
   
-  // 2. 綠界專屬轉換規則 (只處理空格與特殊符號，絕對不還原 = 和 &)
   encoded = encoded
     .replace(/%20/g, '+')
     .replace(/'/g, '%27')
     .replace(/~/g, '%7e');
     
-  // 3. 進行 SHA256 加密並轉大寫
   return crypto.createHash('sha256').update(encoded).digest('hex').toUpperCase();
 }
