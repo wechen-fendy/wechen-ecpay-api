@@ -61,7 +61,7 @@ const ClientBackURL = '[https://wechen.tw](https://wechen.tw)';
   const CheckMacValue = crypto.createHash('sha256').update(checkMacStr).digest('hex').toUpperCase();
   params.CheckMacValue = CheckMacValue;
 
-let formHtml = `<form id="ecpay-form" target="_top" method="POST" action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5">`;
+let formHtml = `<form id="ecpay-form" target="_blank" method="POST" action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5">`;
   for (const key in params) {
     formHtml += `<input type="hidden" name="${key}" value="${params[key]}" />`;
   }
