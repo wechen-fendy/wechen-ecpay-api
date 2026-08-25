@@ -44,6 +44,7 @@ module.exports = async (req, res) => {
     ReturnURL,
     ChoosePayment: 'Credit',
     ClientBackURL,
+    EncryptType: '1'
   };
 
   const checkMacValue = generateCheckMacValue(params, HashKey, HashIV);
