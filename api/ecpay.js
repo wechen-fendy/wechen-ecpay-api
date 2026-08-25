@@ -15,19 +15,15 @@ module.exports = async (req, res) => {
   }
 
   const amount = Math.round(req.body.amount || 0);
-  // 確保品名長度符合綠界規範
   const itemName = (req.body.itemName || 'WECHEN_Product').substring(0, 50);
 
-  // 改用綠界官方最穩定的萬用測試帳號
   const MerchantID = '2000132';
   const HashKey = '5294y06JbISpM5x9';
   const HashIV = 'v77hoKGq4kWxNNIS';
   const ReturnURL = 'https://wechen.tw/api/ecpay/return';
-  const ClientBackURL = 'https://wechen.tw/store';
-
+  const ClientBackURL = 'https://wechen.tw/thank-you';
   const tradeNo = `WECHEN${new Date().getTime()}`;
 
-  // 完美強制格式化時間為 YYYY/MM/DD HH:mm:ss (解決 Vercel 時間偏差問題)
   const d = new Date(new Date().getTime() + 8 * 3600 * 1000);
   const date = `${d.getUTCFullYear()}/${String(d.getUTCMonth() + 1).padStart(2, '0')}/${String(d.getUTCDate()).padStart(2, '0')} ${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}:${String(d.getUTCSeconds()).padStart(2, '0')}`;
 
@@ -54,13 +50,13 @@ module.exports = async (req, res) => {
 
   checkMacStr = encodeURIComponent(checkMacStr).toLowerCase();
   checkMacStr = checkMacStr.replace(/%20/g, '+')
-                           .replace(/%2d/g, '-')
-                           .replace(/%5f/g, '_')
-                           .replace(/%2e/g, '.')
-                           .replace(/%21/g, '!')
-                           .replace(/%2a/g, '*')
-                           .replace(/%28/g, '(')
-                           .replace(/%29/g, ')');
+    .replace(/%2d/g, '-')
+    .replace(/%5f/g, '_')
+    .replace(/%2e/g, '.')
+    .replace(/%21/g, '!')
+    .replace(/%2a/g, '*')
+    .replace(/%28/g, '(')
+    .replace(/%29/g, ')';
 
   const CheckMacValue = crypto.createHash('sha256').update(checkMacStr).digest('hex').toUpperCase();
   params.CheckMacValue = CheckMacValue;
