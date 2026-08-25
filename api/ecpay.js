@@ -49,7 +49,7 @@ module.exports = async (req, res) => {
   const checkMacValue = generateCheckMacValue(params, HashKey, HashIV);
 
   const htmlForm = `
-    <form id="ecpay-form" method="POST" action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5">
+    <form id="ecpay-form" method="POST" target="_top" action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5">
       ${Object.keys(params).map(key => `<input type="hidden" name="${key}" value="${params[key]}">`).join('')}
       <input type="hidden" name="CheckMacValue" value="${checkMacValue}">
     </form>
