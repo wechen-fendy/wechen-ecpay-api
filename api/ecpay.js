@@ -62,12 +62,16 @@ module.exports = async (req, res) => {
 function generateCheckMacValue(params, HashKey, HashIV) {
   const sortedKeys = Object.keys(params).sort();
   let checkString = `HashKey=${HashKey}&` + sortedKeys.map(key => `${key}=${params[key]}`).join('&') + `&HashIV=${HashIV}`;
-  const encoded = encodeURIComponent(checkString).toLowerCase();
-  const replacements = {
-    '%20': '+', '%21': '!', '%2a': '*', '%27': "'", '%28': '(', '%29': ')',
-    '%2d': '-', '%2e': '.', '%5f': '_', '%7e': '~', '%2b': '+', '%3d': '=',
-    '%26': '&', '%3f': '?', '%23': '#', '%2f': '/'
-  };
-  const fixed = encoded.replace(/%[0-9a-f]{2}/gi, match => replacements[match] || match);
-  return crypto.createHash('sha256').update(fixed).digest('hex').toUpperCase();
+  
+  // 1. URL Encode 並轉小寫
+  let encoded = encodeURIComponent(checkString).toLowerCase();
+  
+  // 2. 綠界專屬轉換規則 (只處理空格與特殊符號，絕對不還原 = 和 &)
+  encoded = encoded
+    .replace(/%20/g, '+')
+    .replace(/'/g, '%27')
+    .replace(/~/g, '%7e');
+    
+  // 3. 進行 SHA256 加密並轉大寫
+  return crypto.createHash('sha256').update(encoded).digest('hex').toUpperCase();
 }
