@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
   const HashKey = '5294y06JbISpM5x9';
   const HashIV = 'v77hoKGq4kWxNNIS';
   const ReturnURL = 'https://wechen.tw/api/ecpay/return';
-const ClientBackURL = '[https://wechen.tw](https://wechen.tw)';
+const ClientBackURL = 'https://wechen.tw';
   const tradeNo = `WECHEN${new Date().getTime()}`;
 
   const d = new Date(new Date().getTime() + 8 * 3600 * 1000);
